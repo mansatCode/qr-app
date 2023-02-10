@@ -1,11 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function App() {
+
+  function openQRScanner() {
+    console.log("Scanning QR");
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Text>QR Code Scanner Demo</Text>
+      <TouchableOpacity style={{padding: 10, backgroundColor: "red", borderRadius: 10}} onPress={openQRScanner}>
+        <Text>Scan QR</Text>
+      </TouchableOpacity>
     </View>
   );
 }
