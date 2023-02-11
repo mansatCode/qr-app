@@ -1,68 +1,35 @@
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import QRScanner from './components/QRScanner';
+import { Camera } from 'expo-camera';
 
 export default function App() {
-
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-
   const [displayCamera, setDisplayCamera] = useState(false);
-
-  const requestCameraPermission = () => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })()
-  }
-
-  // Request camera permission
-  useEffect(() => {
-    requestCameraPermission();
-  }, []);
+  const [qrData, setQrData] = useState(null);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   // What happens when we scan the bar code
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    console.log("Scanned")
-  }
+  useEffect(() => {
+    if (qrData == null) return;
+    setDisplayCamera(false); // Hide camera
 
-  // Check permissions and return the screens
-  if (hasPermission === null) {
-    return(
-      <View style={styles.container}>
-        <Text>Requesting for camera permission</Text>
-      </View>
-    )
-  }
+    // ON SCAN, DO SOMETHING LIKE OPEN PAYMENT PAGE?
+    // Don't necessarily have to use the qrData if we're dummying payments
+    console.log("QR Data: ", qrData);
+  }, [qrData])
 
-  if (hasPermission === false) {
-    return(
-      <View style={styles.container}>
-        <Text style={{margin:10}}>No access to camera</Text>
-        <Button title={'Allow Camera'} onPress={() => requestCameraPermission()} />
-      </View>
-    )
-  }
-
-  function openQRScanner() {
-    console.log("Opening camera");
-    setScanned(false);
-    setDisplayCamera(!displayCamera);
+  function toggleQRScanner() {
+    setDisplayCamera(prevCameraState => !prevCameraState);
   }
 
   return (
     <View style={styles.container}>
       <Text>QR Code Scanner Demo</Text>
-      <TouchableOpacity style={{padding: 30,backgroundColor: "#f194ff", borderRadius: 10, marginTop: 10}} onPress={openQRScanner}>
+      <TouchableOpacity style={{padding: 30,backgroundColor: "#f194ff", borderRadius: 10, marginTop: 10}} onPress={toggleQRScanner}>
         <Text>Scan QR</Text>
       </TouchableOpacity>
 
-      <View style={styles.barcodebox}>
-        {displayCamera && <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={{ height: 400, width: 400 }} />}
-      </View>
+      {displayCamera && <QRScanner setQrData={setQrData} toggleQRScanner={toggleQRScanner}/>}
     </View>
   );
 }
@@ -74,14 +41,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  cameraBox: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 300,
-    width: 300,
-    overflow: 'hidden',
-    borderRadius: 30,
-    backgroundColor: 'tomato'
-  }
 });
