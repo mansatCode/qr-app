@@ -2,6 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import QRScanner from './components/QRScanner';
 import { Camera } from 'expo-camera';
+import QRScanner_2 from './components/QRScanner_2';
 
 export default function App() {
   const [displayCamera, setDisplayCamera] = useState(false);
@@ -29,7 +30,8 @@ export default function App() {
         <Text>Scan QR</Text>
       </TouchableOpacity>
 
-      {displayCamera && <QRScanner setQrData={setQrData} toggleQRScanner={toggleQRScanner}/>}
+      <QRScanner_2 />
+      {/* {displayCamera && <QRScanner setQrData={setQrData} toggleQRScanner={toggleQRScanner}/>} */}
     </View>
   );
 }
